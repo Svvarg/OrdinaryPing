@@ -1,0 +1,17 @@
+[
+{
+  "modid": "ordinaryping",
+  "name": "Ordinary Ping",
+  "description": "",
+  "version": 1.0,
+  "credits": "",
+  "logoFile": "",
+  "mcversion": 1.7.10,
+  "url": "https://github.com/OrdinaryMinecraft/OrdinaryPing",
+  "updateUrl": "",
+  "authorList": ["flametaichou"],
+  "parent":"",
+  "screenshots": [],
+  "dependencies": []
+}
+]
