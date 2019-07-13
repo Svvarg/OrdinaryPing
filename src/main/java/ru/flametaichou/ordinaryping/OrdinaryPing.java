@@ -13,9 +13,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import ru.flametaichou.ordinaryping.Handlers.*;
 
-import java.lang.reflect.Field;
 
-@Mod(modid = OrdinaryPing.ID, name = "Ordinary Ping", version = "1.0")
+@Mod(modid = OrdinaryPing.ID, name = "Ordinary Ping", version = "1.0", acceptableRemoteVersions = "*")
 public final class OrdinaryPing {
     public final static String ID = "ordinaryping";
     @Instance(value = ID)
