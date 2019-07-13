@@ -2,9 +2,7 @@ package ru.flametaichou.ordinaryping;
 
 public enum PacketChannel {
 
-    PINGCLIENT(0),
-    PINGSERVER(1),
-    PINGFACT(3);
+    PING(3);
 
     private final int id;
 

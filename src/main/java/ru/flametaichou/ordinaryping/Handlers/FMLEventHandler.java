@@ -6,9 +6,8 @@ import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 import ru.flametaichou.ordinaryping.OrdinaryPing;
-
-import java.util.Date;
 
 public final class FMLEventHandler {
 
@@ -20,29 +19,23 @@ public final class FMLEventHandler {
             if (event.phase == TickEvent.Phase.START) {
                 EntityPlayer player = event.player;
                 if (player.worldObj.getTotalWorldTime() % 40 == 0) {
-                    if (OrdinaryPing.instance.getLastTimeSendClient() == 0) {
-                        FMLProxyPacket packet = PingPacketHandler.getEmptyPacketClient(Side.CLIENT);
-                        OrdinaryPing.pingChannelClient.sendToAll(packet);
-                        OrdinaryPing.instance.setLastTimeSendClient(new Date().getTime());
-                    }
-                    if (OrdinaryPing.instance.getLastTimeSendServer() == 0) {
-                        FMLProxyPacket packet = PingPacketHandler.getEmptyPacketServer(Side.SERVER);
-                        OrdinaryPing.pingChannel.sendToServer(packet);
-                        OrdinaryPing.instance.setLastTimeSendServer(new Date().getTime());
-                    }
                     OrdinaryPing.instance.setFps();
                 }
             }
         } else {
             if (event.phase == TickEvent.Phase.START) {
                 EntityPlayer player = event.player;
-                if (player.worldObj.getTotalWorldTime() % 20 == 0) {
+                if (player.worldObj.getTotalWorldTime() % 40 == 0) {
+
+                    System.out.println(MinecraftServer.getServer().getServerModName());
+                    System.out.println(MinecraftServer.getServer().getWorldName());
+
 
                     EntityPlayerMP entityPlayerMP = (EntityPlayerMP) player;
                     String ping = String.valueOf(entityPlayerMP.ping);
 
                     FMLProxyPacket packet = PingPacketHandler.getStringPacket(Side.CLIENT, ping);
-                    OrdinaryPing.pingChannelFact.sendTo(packet, entityPlayerMP);
+                    OrdinaryPing.pingChannel.sendTo(packet, entityPlayerMP);
                 }
             }
         }
