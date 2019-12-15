@@ -6,10 +6,13 @@ import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import ru.flametaichou.ordinaryping.*;
 
 public final class PingPacketHandler {
+
+    private static long latestPingTime = 0;
 
     @SubscribeEvent
     public void onClientPacket(FMLNetworkEvent.ClientCustomPacketEvent event) {
@@ -25,6 +28,12 @@ public final class PingPacketHandler {
             if (bt != 0)
                 packetString += (char) bt;
         }
+
+        long now = Minecraft.getSystemTime();
+        if (latestPingTime != 0) {
+            OrdinaryPing.instance.setLagg(now - (latestPingTime + OrdinaryPing.pingInterval));
+        }
+        latestPingTime = now;
 
         OrdinaryPing.instance.setPing(Long.parseLong(packetString));
     }

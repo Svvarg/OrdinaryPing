@@ -14,7 +14,7 @@ import net.minecraftforge.common.MinecraftForge;
 import ru.flametaichou.ordinaryping.Handlers.*;
 
 
-@Mod(modid = OrdinaryPing.ID, name = "Ordinary Ping", version = "1.0", acceptableRemoteVersions = "*")
+@Mod(modid = OrdinaryPing.ID, name = "Ordinary Ping", version = "1.1", acceptableRemoteVersions = "*")
 public final class OrdinaryPing {
 
     public final static String ID = "ordinaryping";
@@ -27,8 +27,11 @@ public final class OrdinaryPing {
 
     public static FMLEventChannel pingChannel;
 
+    public final static long pingInterval = 2000;
+
     private Long ping = -1L;
     private Integer fps = 0;
+    private Long lagg = -1L;
 
     @EventHandler
     public void load(FMLInitializationEvent event) {
@@ -66,5 +69,13 @@ public final class OrdinaryPing {
 
     public Integer getFps() {
         return fps;
+    }
+
+    public Long getLagg() {
+        return lagg;
+    }
+
+    public void setLagg(Long lagg) {
+        this.lagg = lagg;
     }
 }

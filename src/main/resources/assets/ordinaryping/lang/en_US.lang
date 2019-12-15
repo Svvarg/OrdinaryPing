@@ -3,3 +3,4 @@ gui.lagg=Lagg
 gui.fps=FPS
 gui.ms=ms
 gui.stabilizes=stabilizes
+gui.unknownServer=Unknown server
