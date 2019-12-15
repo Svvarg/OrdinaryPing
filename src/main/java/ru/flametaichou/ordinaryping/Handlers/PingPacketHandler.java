@@ -12,8 +12,6 @@ import ru.flametaichou.ordinaryping.*;
 
 public final class PingPacketHandler {
 
-    private static long latestPingTime = 0;
-
     @SubscribeEvent
     public void onClientPacket(FMLNetworkEvent.ClientCustomPacketEvent event) {
         if (event.packet.channel().equals(PacketChannel.PING.name())) {
@@ -30,11 +28,11 @@ public final class PingPacketHandler {
         }
 
         long now = Minecraft.getSystemTime();
-        if (latestPingTime != 0) {
-            OrdinaryPing.instance.setLagg(now - (latestPingTime + OrdinaryPing.pingInterval));
+        if (OrdinaryPing.instance.getLatestPingTime() != 0) {
+            OrdinaryPing.instance.setLagg(now - (OrdinaryPing.instance.getLatestPingTime() + OrdinaryPing.pingInterval));
         }
-        latestPingTime = now;
 
+        OrdinaryPing.instance.setLatestPingTime(now);
         OrdinaryPing.instance.setPing(Long.parseLong(packetString));
     }
 

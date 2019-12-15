@@ -26,9 +26,11 @@ public final class OrdinaryPing {
     public static OrdinaryPingProxy proxy;
 
     public static FMLEventChannel pingChannel;
+    public static PingPacketHandler sk = new PingPacketHandler();
 
     public final static long pingInterval = 2000;
 
+    private long latestPingTime = 0;
     private Long ping = -1L;
     private Integer fps = 0;
     private Long lagg = -1L;
@@ -36,7 +38,6 @@ public final class OrdinaryPing {
     @EventHandler
     public void load(FMLInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(new PlayerEventHandler());
-        PingPacketHandler sk = new PingPacketHandler();
         pingChannel = NetworkRegistry.INSTANCE.newEventDrivenChannel(PacketChannel.PING.name());
         pingChannel.register(sk);
         proxy.registerGui();
@@ -49,6 +50,8 @@ public final class OrdinaryPing {
 
     public void clearPings() {
         ping = -1L;
+        lagg = -1L;
+        latestPingTime = 0;
     }
 
     public Long getPing() {
@@ -77,5 +80,13 @@ public final class OrdinaryPing {
 
     public void setLagg(Long lagg) {
         this.lagg = lagg;
+    }
+
+    public long getLatestPingTime() {
+        return latestPingTime;
+    }
+
+    public void setLatestPingTime(long latestPingTime) {
+        this.latestPingTime = latestPingTime;
     }
 }
