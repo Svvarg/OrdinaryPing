@@ -12,6 +12,23 @@ import ru.flametaichou.ordinaryping.*;
 
 public final class PingPacketHandler {
 
+    /**
+     * Make Ping packet for ClientSide
+     * @param side
+     * @param data
+     * @return 
+     */
+    public static FMLProxyPacket getLongPacket(Side side, long data) {
+        ByteBuf buf = Unpooled.buffer(2+8);
+        buf.writeByte(1);   //reserve
+        buf.writeByte(2);   //reserve
+        buf.writeLong(data);
+        FMLProxyPacket pkt = new FMLProxyPacket(buf, PacketChannel.PING.name());
+        pkt.setTarget(side);
+        return pkt;
+    }
+
+
     @SubscribeEvent
     public void onClientPacket(FMLNetworkEvent.ClientCustomPacketEvent event) {
         if (event.packet.channel().equals(PacketChannel.PING.name())) {
@@ -19,31 +36,26 @@ public final class PingPacketHandler {
         }
     }
 
+    /**
+     * ClientSide
+     * @param packet
+     * @param player
+     */
     public static void handleFactPacketFromServer(FMLProxyPacket packet, EntityPlayer player) {
         ByteBuf buf = packet.payload();
-        String packetString = "";
-        for (byte bt : buf.array()) {
-            if (bt != 0)
-                packetString += (char) bt;
-        }
 
+        final byte b0 = buf.readByte(); //1 Reserve
+        final byte b1 = buf.readByte(); //2 Reserve
+        final long data = buf.readLong();
+
+        final OrdinaryPing ping = OrdinaryPing.instance;
         long now = Minecraft.getSystemTime();
-        if (OrdinaryPing.instance.getLatestPingTime() != 0) {
-            OrdinaryPing.instance.setLagg(now - (OrdinaryPing.instance.getLatestPingTime() + OrdinaryPing.pingInterval));
+        if (ping.getLatestPingTime() != 0) {
+            ping.setLagg(now - (ping.getLatestPingTime() + OrdinaryPing.pingInterval));
         }
 
-        OrdinaryPing.instance.setLatestPingTime(now);
-        OrdinaryPing.instance.setPing(Long.parseLong(packetString));
+        ping.setLatestPingTime(now);
+        ping.setPing(data);
     }
-
-    public static FMLProxyPacket getStringPacket(Side side, String data) {
-        char[] dat = data.toCharArray();
-        ByteBuf buf = Unpooled.buffer();
-        for (int i = 0; i < dat.length; i++) {
-            buf.writeByte(dat[i]);
-        }
-        FMLProxyPacket pkt = new FMLProxyPacket(buf, PacketChannel.PING.name());
-        pkt.setTarget(side);
-        return pkt;
-    }
+    
 }

@@ -8,6 +8,7 @@ import ru.flametaichou.ordinaryping.OrdinaryPing;
 
 public class PlayerEventHandler {
 
+    //ClientSide
     @SubscribeEvent
     public void onPlayerJoin(EntityJoinWorldEvent event) {
         if (event.world.isRemote) {

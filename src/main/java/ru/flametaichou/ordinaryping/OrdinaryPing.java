@@ -1,5 +1,6 @@
 package ru.flametaichou.ordinaryping;
 
+import ru.flametaichou.ordinaryping.time.ServerTime;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -7,6 +8,7 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraft.client.Minecraft;
@@ -14,7 +16,7 @@ import net.minecraftforge.common.MinecraftForge;
 import ru.flametaichou.ordinaryping.Handlers.*;
 
 
-@Mod(modid = OrdinaryPing.ID, name = "Ordinary Ping", version = "1.1", acceptableRemoteVersions = "*")
+@Mod(modid = OrdinaryPing.ID, name = "Ordinary Ping", version = "1.2", acceptableRemoteVersions = "*")
 public final class OrdinaryPing {
 
     public final static String ID = "ordinaryping";
@@ -22,13 +24,19 @@ public final class OrdinaryPing {
     @Instance(value = ID)
     public static OrdinaryPing instance;
 
-    @SidedProxy(clientSide = "ru.flametaichou.ordinaryping.OrdinaryPingClientProxy", serverSide = "ru.flametaichou.ordinaryping.OrdinaryPingProxy")
+    @SidedProxy(
+            clientSide = "ru.flametaichou.ordinaryping.OrdinaryPingClientProxy",
+            serverSide = "ru.flametaichou.ordinaryping.OrdinaryPingProxy")
     public static OrdinaryPingProxy proxy;
 
     public static FMLEventChannel pingChannel;
     public static PingPacketHandler sk = new PingPacketHandler();
 
     public final static long pingInterval = 2000;
+
+    /* Reduce sysspacecall to System.currTimeMillis
+    For work with MCBackendLib and without (SinglePlay). */
+    public static ServerTime systime;
 
     private long latestPingTime = 0;
     private Long ping = -1L;
@@ -45,7 +53,7 @@ public final class OrdinaryPing {
 
     @EventHandler
     public void load(FMLPreInitializationEvent event) {
-        FMLCommonHandler.instance().bus().register(FMLEventHandler.INSTANCE);
+        proxy.registerFMLEventHandler();
     }
 
     public void clearPings() {
@@ -62,12 +70,8 @@ public final class OrdinaryPing {
         this.ping = ping;
     }
 
-    public void setFps() {
-        try {
-            this.fps = Integer.parseInt(Minecraft.getMinecraft().debug.split(" ")[0]);
-        } catch (Exception e) {
-            this.fps = 0;
-        }
+    public void setFps(int fps) {
+        this.fps = fps;
     }
 
     public Integer getFps() {
