@@ -17,13 +17,17 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1.1"
-group= "ru.flametaichou.ordinaryping" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+version = "1.2"
+group = "ru.flametaichou.ordinaryping" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "OrdinaryPing"
 
 minecraft {
     version = "1.7.10-10.13.4.1614-1.7.10"
     runDir = "eclipse"
+}
+
+repositories {
+    mavenLocal()
 }
 
 dependencies {
@@ -39,7 +43,7 @@ dependencies {
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+    compile 'org.swarg.mcforge:mcfbackendlib:0.5.1:dev'
 }
 
 processResources
