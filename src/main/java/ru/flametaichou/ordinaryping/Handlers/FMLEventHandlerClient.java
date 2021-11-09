@@ -2,54 +2,38 @@ package ru.flametaichou.ordinaryping.Handlers;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.common.network.internal.FMLProxyPacket;
-import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.WorldServer;
 import ru.flametaichou.ordinaryping.OrdinaryPing;
 
-public final class FMLEventHandler {
+public final class FMLEventHandlerClient {
 
-    private static long latestFpsUpdate = 0;
-    private static long latestPingSend = 0;
+    public static final FMLEventHandlerClient INSTANCE = new FMLEventHandlerClient();
+    private static long nextFpsUpdate = 0;
 
-    public static final FMLEventHandler INSTANCE = new FMLEventHandler();
     
     @SubscribeEvent
     public void onPlayerUpdate(TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.START) {
             if (event.side.isClient()) {
                 long now = Minecraft.getSystemTime();
-                if (now - latestFpsUpdate >= OrdinaryPing.pingInterval) {
-                    latestFpsUpdate = now;
-                    OrdinaryPing.instance.setFps();
+                if (now >= nextFpsUpdate) {
+                    nextFpsUpdate = now + OrdinaryPing.pingInterval;
+                    OrdinaryPing.instance.setFps(parseFps());
                 }
             }
         }
     }
 
-    @SubscribeEvent
-    public void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase == TickEvent.Phase.START) {
-            if (event.side.isServer()) {
-                long now = MinecraftServer.getSystemTimeMillis();
-                if (now - latestPingSend >= OrdinaryPing.pingInterval) {
-                    latestPingSend = now;
-                    for (WorldServer worldServer : MinecraftServer.getServer().worldServers) {
-                        for (Object playerObj : worldServer.playerEntities) {
-                            EntityPlayerMP entityPlayerMP = (EntityPlayerMP) playerObj;
-
-                            String ping = String.valueOf(entityPlayerMP.ping);
-
-                            FMLProxyPacket packet = PingPacketHandler.getStringPacket(Side.CLIENT, ping);
-                            OrdinaryPing.pingChannel.sendTo(packet, entityPlayerMP);
-                        }
-                    }
-                }
-            }
+    public int parseFps() {
+        try {
+            //this.fps = Integer.parseInt(Minecraft.getMinecraft().debug.split(" ")[0]);
+            final String d = Minecraft.getMinecraft().debug;
+            final String sfps = d.substring(0, d.indexOf(' '));
+            return Integer.parseInt( sfps );
+        } catch (Exception e) {
+            return 0;
         }
     }
+
 }
+ 
